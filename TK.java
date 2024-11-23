@@ -32,11 +32,14 @@ public enum TK {
    EQ,      // ==
    NEQ,     // !=
    LT,      // <
+   GT,      // >
    ACCESS,  // .
 
    // Delimitadores
    LBRACE,  // {
    RBRACE,  // }
+   LBRACKET,  // [
+   RBRACKET,  // ]
    LPAREN,  // (
    RPAREN,  // )
    COMMA,   // ,
@@ -45,3 +48,4 @@ public enum TK {
    // Fim do arquivo
    EOF
 }
+

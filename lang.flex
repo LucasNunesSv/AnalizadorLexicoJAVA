@@ -72,8 +72,11 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     "=="         { return new Token(yyline, yycolumn, TK.EQ, "=="); }
     "!="         { return new Token(yyline, yycolumn, TK.NEQ, "!="); }
     "<"          { return new Token(yyline, yycolumn, TK.LT, "<"); }
+    ">"          { return new Token(yyline, yycolumn, TK.GT, ">"); }
     "{"          { return new Token(yyline, yycolumn, TK.LBRACE, "{"); }
     "}"          { return new Token(yyline, yycolumn, TK.RBRACE, "}"); }
+    "["          { return new Token(yyline, yycolumn, TK.LBRACKET, "["); }
+    "]"          { return new Token(yyline, yycolumn, TK.RBRACKET, "]"); }
     "("          { return new Token(yyline, yycolumn, TK.LPAREN, "("); }
     ")"          { return new Token(yyline, yycolumn, TK.RPAREN, ")"); }
     ","          { return new Token(yyline, yycolumn, TK.COMMA, ","); }

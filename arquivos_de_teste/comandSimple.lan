@@ -1,0 +1,10 @@
+
+main(){
+    z = 10;
+    if (z > 0)
+       iterate(z){
+          print '*';
+       }
+    else print '0';
+    print '\n';
+}
