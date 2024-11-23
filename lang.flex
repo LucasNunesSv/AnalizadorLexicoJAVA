@@ -38,7 +38,9 @@ TYID = [A-Z][a-zA-Z0-9_]*
 number = [0-9]+
 float = [0-9]+(\.[0-9]+)?
 white = [ \n\t\r]+
-comment = (/*([^]|[\r\n]|(*+([^/]|[\r\n])))*+/)|(//.)
+char = "'" !([^]* "'" [^]*) ("'")
+comment_block = "{-" !([^]* "-}" [^]*) ("-}")
+comment_line = "--" !([^]* "\n" [^]*) ("\n")
 
 %%
 
@@ -49,27 +51,35 @@ comment = (/*([^]|[\r\n]|(*+([^/]|[\r\n])))*+/)|(//.)
     "iterate"   { return new Token(yyline, yycolumn, TK.ITERATE); }
     "read"      { return new Token(yyline, yycolumn, TK.READ); }
     "print"     { return new Token(yyline, yycolumn, TK.PRINT); }
+    "null"     { return new Token(yyline, yycolumn, TK.NULL); }
+    "true"     { return new Token(yyline, yycolumn, TK.BOOL, "val: true"); }
+    "false"     { return new Token(yyline, yycolumn, TK.BOOL, "val: false"); }
     "return"    { return new Token(yyline, yycolumn, TK.RETURN); }
-    {identifier} { return new Token(yyline, yycolumn, TK.ID, yytext()); }
-    {TYID}       { return new Token(yyline, yycolumn, TK.TYID, yytext()); }
-    {number}     { return new Token(yyline, yycolumn, TK.INT, toInt(yytext())); }
-    {float}      { return new Token(yyline, yycolumn, TK.FLOAT, Float.parseFloat(yytext())); }
-    {comment}    { /* Ignorar comentários */ }
+    {identifier} { return new Token(yyline, yycolumn, TK.ID, "val: " + yytext()); }
+    {TYID}       { return new Token(yyline, yycolumn, TK.TYID, "val: " + yytext()); }
+    {char}       { return new Token(yyline, yycolumn, TK.CHAR, "val: " + yytext()); }
+    {number}     { return new Token(yyline, yycolumn, TK.INT, "val: " + toInt(yytext())); }
+    {float}      { return new Token(yyline, yycolumn, TK.FLOAT, "val: " + Float.parseFloat(yytext())); }
+    {comment_block}   { /* Ignorar comentários em bloco*/ }
+    {comment_line}    { /* Ignorar comentários em linha*/ }
     {white}      { /* Ignorar espaços */ }
-    "+"          { return new Token(yyline, yycolumn, TK.PLUS); }
-    "-"          { return new Token(yyline, yycolumn, TK.MINUS); }
-    "*"          { return new Token(yyline, yycolumn, TK.MULT); }
-    "/"          { return new Token(yyline, yycolumn, TK.DIV); }
-    "%"          { return new Token(yyline, yycolumn, TK.MOD); }
-    "="          { return new Token( yyline, yycolumn, TK.ATBR); }
-    "=="         { return new Token(yyline, yycolumn, TK.EQ); }
-    "!="         { return new Token(yyline, yycolumn, TK.NEQ); }
-    "<"          { return new Token(yyline, yycolumn, TK.LT); }
-    "{"          { return new Token(yyline, yycolumn, TK.LBRACE); }
-    "}"          { return new Token(yyline, yycolumn, TK.RBRACE); }
-    "("          { return new Token(yyline, yycolumn, TK.LPAREN); }
-    ")"          { return new Token(yyline, yycolumn, TK.RPAREN); }
-    ","          { return new Token(yyline, yycolumn, TK.COMMA); }
-    ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON); }
+    "+"          { return new Token(yyline, yycolumn, TK.PLUS, "+"); }
+    "-"          { return new Token(yyline, yycolumn, TK.MINUS, "-"); }
+    "*"          { return new Token(yyline, yycolumn, TK.MULT, "*"); }
+    "/"          { return new Token(yyline, yycolumn, TK.DIV, "/"); }
+    "%"          { return new Token(yyline, yycolumn, TK.MOD, "%"); }
+    "="          { return new Token( yyline, yycolumn, TK.ATBR, "="); }
+    "=="         { return new Token(yyline, yycolumn, TK.EQ, "=="); }
+    "!="         { return new Token(yyline, yycolumn, TK.NEQ, "!="); }
+    "<"          { return new Token(yyline, yycolumn, TK.LT, "<"); }
+    "{"          { return new Token(yyline, yycolumn, TK.LBRACE, "{"); }
+    "}"          { return new Token(yyline, yycolumn, TK.RBRACE, "}"); }
+    "("          { return new Token(yyline, yycolumn, TK.LPAREN, "("); }
+    ")"          { return new Token(yyline, yycolumn, TK.RPAREN, ")"); }
+    ","          { return new Token(yyline, yycolumn, TK.COMMA, ","); }
+    "."          { return new Token(yyline, yycolumn, TK.ACCESS, "."); }
+    ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON, ";"); }
+    "::"          { return new Token(yyline, yycolumn, TK.PTR, "::"); }
+    ":"          { return new Token(yyline, yycolumn, TK.TYPE, ":"); }
     [^]          { throw new Error("Caractere ilegal: " + yytext()); }
 }

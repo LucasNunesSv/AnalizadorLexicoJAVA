@@ -1,0 +1,31 @@
+
+data ListInt {head :: Int;
+              tail :: ListInt;}
+
+
+createList() : ListInt {
+    return null;
+}
+
+insList(x :: Int, l :: ListInt) : ListInt {
+    ls = new ListInt;
+    ls.head = x;
+    ls.tail = l;
+    return ls;
+}
+
+sizeList(l :: ListInt) : Int {
+    if(l == null) return 0;
+    else{
+        return 1 + sizeList(l.tail);
+    }
+}
+
+main() : Int {
+   xs = createList();
+   xs = insList(3,xs);
+   xs = insList(2,xs);
+   xs = insList(1,xs);
+   print sizeList(xs);
+   return 0;
+}

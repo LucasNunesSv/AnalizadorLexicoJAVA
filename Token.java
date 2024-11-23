@@ -18,7 +18,7 @@ public class Token {
    }
 
    public String toString(){
-       return "(" + line + "," + column+ ") TK: " + tk +  (value == null ? "" : "  val: " + value.toString());
+       return "(" + line + "," + column+ ") TK: " + tk +  (value == null ? "" : " - (" + value.toString() + ")");
    }
 
 }

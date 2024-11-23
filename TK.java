@@ -12,10 +12,15 @@ public enum TK {
    // Identificadores e tipos
    ID,
    TYID,
+   PTR,
+   TYPE,
 
    // Literais
    INT,
    FLOAT,
+   CHAR,
+   BOOL,
+   NULL,
 
    // Operadores
    PLUS,    // +
@@ -27,6 +32,7 @@ public enum TK {
    EQ,      // ==
    NEQ,     // !=
    LT,      // <
+   ACCESS,  // .
 
    // Delimitadores
    LBRACE,  // {
