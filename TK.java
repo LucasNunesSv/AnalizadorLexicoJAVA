@@ -1,3 +1,8 @@
+/* Prototipo de um analizador lexico para linguagem Lang 
+ * Lucas Nunes Silveira - 20.2.8040
+ * Matheus Lopes Moreira - 20.2.8002
+*/
+
 // Enumeração de tipos de tokens reconhecidos pelo lexer
 public enum TK {
    // Palavras reservadas

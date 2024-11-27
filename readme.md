@@ -34,3 +34,13 @@ Para remover os arquivos gerados durante a execução ou compilação, utilize:
 ```bash
 $ make clean
 ```
+
+## Autores
+
+Este projeto foi desenvolvido por:
+
+- **Lucas Nunes Silveira**  
+- **Matheus Lopes Moreira**
+
+Agradecemos por explorar nosso trabalho! 😊
+
