@@ -1,7 +1,0 @@
-
-{- Isto é comentario -}
-
-
-a +  {- Aqui tb é comentário -} b;
-c = [1 2 3];
-

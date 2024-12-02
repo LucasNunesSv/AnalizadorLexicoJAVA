@@ -41,7 +41,12 @@ TYID = [A-Z][a-zA-Z0-9_]*
 number = [0-9]+
 float = [0-9]+(\.[0-9]+)?
 white = [ \n\t\r]+
-char = "'" !([^]* "'" [^]*) ("'")
+
+char_normal = "'" [a-zA-Z0-9 ] "'" 
+char_escape = "'" ("\\n" | "\\t" | "\\b" | "\\r" | "\\" | "'" | "\"" | "\\" [0-7]{1,3}) "'"
+char_ascii = "'" "\\" [0-7]{1,3} "'"
+ 
+
 comment_block = "{-" !([^]* "-}" [^]*) ("-}")
 comment_line = "--" !([^]* "\n" [^]*) ("\n")
 
@@ -60,7 +65,36 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     "return"    { return new Token(yyline, yycolumn, TK.RETURN); }
     {identifier} { return new Token(yyline, yycolumn, TK.ID, "val: " + yytext()); }
     {TYID}       { return new Token(yyline, yycolumn, TK.TYID, "val: " + yytext()); }
-    {char}       { return new Token(yyline, yycolumn, TK.CHAR, "val: " + yytext()); }
+    {char_normal} { 
+        return new Token(yyline, yycolumn, TK.CHAR, "val: " + yytext().charAt(1)); 
+    }
+    {char_escape} { 
+        String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
+        if (val.startsWith("\\")) { // É um escape.
+            switch (val.charAt(1)) {
+                case 'n': return new Token(yyline, yycolumn, TK.NEWLINE, "val: \\n");
+                case 't': return new Token(yyline, yycolumn, TK.TAB, "val: \\t");
+                case 'b': return new Token(yyline, yycolumn, TK.BACKSPACE, "val: \\b");
+                case 'r': return new Token(yyline, yycolumn, TK.CARRIAGERETURN, "val: \\r");
+                case '\\': return new Token(yyline, yycolumn, TK.BACKSLASH, "val: \\\\");
+                case '\'': return new Token(yyline, yycolumn, TK.SINGLEQUOTE, "val: \\'");
+                case '"': return new Token(yyline, yycolumn, TK.DOUBLEQUOTE, "val: \\\"");
+                default:
+                    // ASCII literal (ex: \065)
+                    if (Character.isDigit(val.charAt(1))) {
+                        int asciiCode = Integer.parseInt(val.substring(1));
+                        return new Token(yyline, yycolumn, TK.ASC, "val: " + asciiCode);
+                    } else {
+                        throw new Error("Escape inválido: " + val);
+                    }
+            }
+        }
+    }
+    {char_ascii} {
+        String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
+        int asciiCode = Integer.parseInt(val);
+        return new Token(yyline, yycolumn, TK.ASCII, "val: " + asciiCode);
+    }
     {number}     { return new Token(yyline, yycolumn, TK.INT, "val: " + toInt(yytext())); }
     {float}      { return new Token(yyline, yycolumn, TK.FLOAT, "val: " + Float.parseFloat(yytext())); }
     {comment_block}   { /* Ignorar comentários em bloco*/ }
@@ -83,7 +117,7 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     "("          { return new Token(yyline, yycolumn, TK.LPAREN, "("); }
     ")"          { return new Token(yyline, yycolumn, TK.RPAREN, ")"); }
     ","          { return new Token(yyline, yycolumn, TK.COMMA, ","); }
-    "."          { return new Token(yyline, yycolumn, TK.ACCESS, "."); }
+    "."          { return new Token(yyline, yycolumn, TK.DOT, "."); }
     ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON, ";"); }
     "::"          { return new Token(yyline, yycolumn, TK.PTR, "::"); }
     ":"          { return new Token(yyline, yycolumn, TK.TYPE, ":"); }

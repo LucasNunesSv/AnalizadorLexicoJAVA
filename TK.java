@@ -38,7 +38,7 @@ public enum TK {
    NEQ,     // !=
    LT,      // <
    GT,      // >
-   ACCESS,  // .
+   DOT,  // .
 
    // Delimitadores
    LBRACE,  // {
@@ -49,6 +49,16 @@ public enum TK {
    RPAREN,  // )
    COMMA,   // ,
    SEMICOLON, // ;
+
+   // Char tokens
+   NEWLINE,
+   TAB,
+   BACKSPACE,
+   CARRIAGERETURN,
+   BACKSLASH,
+   SINGLEQUOTE,
+   DOUBLEQUOTE,
+   ASC,
 
    // Fim do arquivo
    EOF
