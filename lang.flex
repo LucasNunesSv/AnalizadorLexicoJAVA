@@ -118,5 +118,5 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON, ";"); }
     "::"          { return new Token(yyline, yycolumn, TK.PTR, "::"); }
     ":"          { return new Token(yyline, yycolumn, TK.TYPE, ":"); }
-    [^]          { throw new Error("Caractere ilegal: " + yytext()); }
+    [^]          { throw new Error("Expressao Invalida!!! verifique se existem erros lexicos no arquivo teste"); }
 }
