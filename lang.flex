@@ -42,9 +42,10 @@ number = [0-9]+
 float = [0-9]+(\.[0-9]+)?
 white = [ \n\t\r]+
 
-char_normal = "'" [a-zA-Z0-9 ] "'" 
-char_escape = "'" ("\\n" | "\\t" | "\\b" | "\\r" | "\\" | "'" | "\"" | "\\" [0-7]{1,3}) "'"
-char_ascii = "'" "\\" [0-7]{1,3} "'"
+// char_normal = "'" [a-zA-Z0-9 ] "'" 
+char_normal = "'" [^'\\] "'" 
+// char_escape = "'" ("\\n" | "\\t" | "\\b" | "\\r" | "\\'" | "\\\"" | "\\\\" [0-7]{1,3}) "'"
+char_escape = "'" "\\" [ntbr\\\'\"] "'" | "'" "\\" [0-7]{1,3} "'"
  
 
 comment_block = "{-" !([^]* "-}" [^]*) ("-}")
@@ -70,30 +71,26 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     }
     {char_escape} { 
         String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
-        if (val.startsWith("\\")) { // É um escape.
+        if (val.startsWith("\\")) { // Verifica se é uma sequência de escape.
             switch (val.charAt(1)) {
                 case 'n': return new Token(yyline, yycolumn, TK.NEWLINE, "val: \\n");
                 case 't': return new Token(yyline, yycolumn, TK.TAB, "val: \\t");
                 case 'b': return new Token(yyline, yycolumn, TK.BACKSPACE, "val: \\b");
                 case 'r': return new Token(yyline, yycolumn, TK.CARRIAGERETURN, "val: \\r");
-                case '\\': return new Token(yyline, yycolumn, TK.BACKSLASH, "val: \\\\");
-                case '\'': return new Token(yyline, yycolumn, TK.SINGLEQUOTE, "val: \\'");
-                case '"': return new Token(yyline, yycolumn, TK.DOUBLEQUOTE, "val: \\\"");
+                case '\\': return new Token(yyline, yycolumn, TK.BACKSLASH, "val: \\\\"); // Retorna o caractere de barra invertida.
+                case '\'': return new Token(yyline, yycolumn, TK.SINGLEQUOTE, "val: \\\'"); // Retorna o caractere de aspa simples.
+                case '"': return new Token(yyline, yycolumn, TK.DOUBLEQUOTE, "val: \\\""); // Retorna o caractere de aspa dupla.
                 default:
-                    // ASCII literal (ex: \065)
+                    // Verifica se é um código ASCII (ex: \065)
                     if (Character.isDigit(val.charAt(1))) {
-                        int asciiCode = Integer.parseInt(val.substring(1));
+                        String asciiString = val.substring(1); // Remove o caractere de escape.
+                        int asciiCode = Integer.parseInt(asciiString, 8); // Converte octal para decimal
                         return new Token(yyline, yycolumn, TK.ASC, "val: " + asciiCode);
                     } else {
-                        throw new Error("Escape inválido: " + val);
+                        System.out.println("Escape inválido: " + val);
                     }
             }
         }
-    }
-    {char_ascii} {
-        String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
-        int asciiCode = Integer.parseInt(val);
-        return new Token(yyline, yycolumn, TK.ASCII, "val: " + asciiCode);
     }
     {number}     { return new Token(yyline, yycolumn, TK.INT, "val: " + toInt(yytext())); }
     {float}      { return new Token(yyline, yycolumn, TK.FLOAT, "val: " + Float.parseFloat(yytext())); }

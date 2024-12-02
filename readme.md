@@ -22,7 +22,7 @@ $ make
 Após compilar, você pode executar o analisador com o seguinte comando:
 
 ```bash
-$ java Main  ./arquivos_de_teste/<nomeDoArquivo>
+$ java Main ./arquivos_de_teste/<nomeDoArquivo>
 ```
 
 Substitua <nomeDoArquivo> pelo caminho do arquivo que deseja analisar.

@@ -1,4 +1,9 @@
 main(){
   -- Uma linha de comentario
   x = '\n';
+  y = '\t';
+   w = '\\';
+  y = '\'';
+  y = '\"';
+  z = '\234';
 }
