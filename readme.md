@@ -42,5 +42,7 @@ Este projeto foi desenvolvido por:
 - **Lucas Nunes Silveira**  
 - **Matheus Lopes Moreira**
 
+Link para este repositório: (https://github.com/LucasNunesSv/AnalizadorLexicoJAVA)
+
 Agradecemos por explorar nosso trabalho! 😊
 
