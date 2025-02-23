@@ -39,7 +39,7 @@ import java.util.ArrayList;
 identifier = [a-z][a-zA-Z0-9_]*
 TYID = [A-Z][a-zA-Z0-9_]*
 number = [0-9]+
-float = [0-9]+(\.[0-9]+)?
+float = [0-9]*(\.[0-9]+)
 white = [ \n\t\r]+
 
 // char_normal = "'" [a-zA-Z0-9 ] "'" 
@@ -84,7 +84,7 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
                     // Verifica se é um código ASCII (ex: \065)
                     if (Character.isDigit(val.charAt(1))) {
                         String asciiString = val.substring(1); // Remove o caractere de escape.
-                        int asciiCode = Integer.parseInt(asciiString, 8); // Converte octal para decimal
+                        int asciiCode = Integer.parseInt(asciiString); // Converte octal para decimal
                         return new Token(yyline, yycolumn, TK.ASC, "val: " + asciiCode);
                     } else {
                         System.out.println("Escape inválido: " + val);
