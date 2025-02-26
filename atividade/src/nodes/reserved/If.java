@@ -11,7 +11,6 @@ public class If extends LNode {
    public If(int l, int c, Res e, LNode ths, LNode els){
       super(l,c);
       cond = e;
-      this.thn = thn;
       this.els = els;
    }
 
