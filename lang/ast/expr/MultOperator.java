@@ -2,7 +2,7 @@ package lang.ast.expr;
 
 import lang.ast.LVisitor;;
 
-public abstract class MultOperator extends BinOp {
+public class MultOperator extends BinOp {
     public MultOperator(int line, int col, Exp el, Exp er) {
         super(line, col, el, er);
     }

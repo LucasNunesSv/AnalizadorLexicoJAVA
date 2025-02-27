@@ -2,6 +2,7 @@
  * Lucas Nunes Silveira - 20.2.8040
  * Matheus Lopes Moreira - 20.2.8002
 */
+package lang.parser;
 
 // Enumeração de tipos de tokens reconhecidos pelo lexer
 public enum TK {
@@ -31,26 +32,26 @@ public enum TK {
    NULL,
 
    // Operadores
-   PLUS,    // +
-   MINUS,   // -
-   MULT,    // *
-   DIV,     // /
-   MOD,     // %
-   ATBR,    // =
-   EQ,      // ==
-   NEQ,     // !=
-   LT,      // <
-   GT,      // >
-   DOT,  // .
+   PLUS, // +
+   MINUS, // -
+   MULT, // *
+   DIV, // /
+   MOD, // %
+   ATBR, // =
+   EQ, // ==
+   NEQ, // !=
+   LT, // <
+   GT, // >
+   DOT, // .
 
    // Delimitadores
-   LBRACE,  // {
-   RBRACE,  // }
-   LBRACKET,  // [
-   RBRACKET,  // ]
-   LPAREN,  // (
-   RPAREN,  // )
-   COMMA,   // ,
+   LBRACE, // {
+   RBRACE, // }
+   LBRACKET, // [
+   RBRACKET, // ]
+   LPAREN, // (
+   RPAREN, // )
+   COMMA, // ,
    SEMICOLON, // ;
 
    // Char tokens
@@ -65,4 +66,3 @@ public enum TK {
    // Fim do arquivo
    EOF
 }
-

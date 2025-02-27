@@ -1,9 +1,8 @@
 package lang.ast.expr;
 
-import lang.ast.LNode;
-import lang.ast.LVisitor;;
+import lang.ast.LVisitor;
 
-public class Var extends LNode {
+public class Var extends Exp {
     private final String name;
 
     public Var(int line, int col, String name) {

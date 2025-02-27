@@ -6,6 +6,7 @@
 package lang.parser;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
+import lang.parser.*;
 
 %%
 

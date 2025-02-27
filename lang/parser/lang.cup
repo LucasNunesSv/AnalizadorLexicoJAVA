@@ -7,6 +7,7 @@ import lang.ast.*;
 import lang.ast.command.*;
 import lang.ast.expr.*;
 import lang.ast.types.*;
+import lang.ast.delimiters.*;
 import java.util.ArrayList;
 
 class LangParser;
@@ -48,8 +49,8 @@ precedence left PLUS;
 prog ::= expr:e {: RESULT = e; :}
        ;
 
-expr  ::= expr:e1 PLUS:p expr:e2 {: RESULT = new Plus(pleft,pright,e1,e2); :}
-       |  expr:e1 TIMES:s expr:e2 {: RESULT = new Times(sleft,sright,e1,e2); :}
+expr  ::= expr:e1 PLUS:p expr:e2 {: RESULT = new PlusOperator(pleft,pright,e1,e2); :}
+       |  expr:e1 TIMES:s expr:e2 {: RESULT = new MultOperator(sleft,sright,e1,e2); :}
        |  LP expr:e RP {: RESULT = e; :}
        |  NUMBER:n {: RESULT = new IntLit(nleft,nright,n); :}
        |  TRUE:t {: RESULT = new BoolLit(tleft,tright,true); :}
