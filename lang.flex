@@ -3,13 +3,16 @@
  * Matheus Lopes Moreira - 20.2.8002
 */
 
+package parser;
+
 import java.util.ArrayList;
+import java_cup.runtime.Symbol;
 
 %%
 
 %public
 %function nextToken
-%type Token
+%type Symbol
 %class LangLexer
 
 %line
@@ -18,7 +21,7 @@ import java.util.ArrayList;
 %unicode
 
 %eofval{
-   return new Token( yyline, yycolumn, TK.EOF);
+   return new Symbol( yyline, yycolumn, LangParserSym.EOF);
 %eofval}
 
 %state ARR,
@@ -64,50 +67,50 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     "--"  !([^]* \R [^]*) \R  {}
 
     /* Data types */
-    "Int"       { return new Token(yyline, yycolumn, TK.INT); }
-    "Float"     { return new Token(yyline, yycolumn, TK.FLOAT); }
-    "Char"      { return new Token(yyline, yycolumn, TK.CHAR); }
-    "Bool"      { return new Token(yyline, yycolumn, TK.BOOL); }
-    {TYID}       { return new Token(yyline, yycolumn, TK.TYID, yytext()); }
+    "Int"       { return new Symbol(yyline, yycolumn, LangParserSym.INT); }
+    "Float"     { return new Symbol(yyline, yycolumn, LangParserSym.FLOAT); }
+    "Char"      { return new Symbol(yyline, yycolumn, LangParserSym.CHAR); }
+    "Bool"      { return new Symbol(yyline, yycolumn, LangParserSym.BOOL); }
+    {TYID}       { return new Symbol(yyline, yycolumn, LangParserSym.TYID, yytext()); }
 
     /* Reserved words */
-    "data"      { return new Token(yyline, yycolumn, TK.DATA); }
-    "if"        { return new Token(yyline, yycolumn, TK.IF); }
-    "else"      { return new Token(yyline, yycolumn, TK.ELSE); }
-    "iterate"   { return new Token(yyline, yycolumn, TK.ITERATE); }
-    "read"      { return new Token(yyline, yycolumn, TK.READ); }
-    "print"     { return new Token(yyline, yycolumn, TK.PRINT); }
-    "null"     { return new Token(yyline, yycolumn, TK.NULL); }
-    "return"    { return new Token(yyline, yycolumn, TK.RETURN); }
+    "data"      { return new Symbol(yyline, yycolumn, LangParserSym.DATA); }
+    "if"        { return new Symbol(yyline, yycolumn, LangParserSym.IF); }
+    "else"      { return new Symbol(yyline, yycolumn, LangParserSym.ELSE); }
+    "iterate"   { return new Symbol(yyline, yycolumn, LangParserSym.ITERATE); }
+    "read"      { return new Symbol(yyline, yycolumn, LangParserSym.READ); }
+    "print"     { return new Symbol(yyline, yycolumn, LangParserSym.PRINT); }
+    "null"     { return new Symbol(yyline, yycolumn, LangParserSym.NULL); }
+    "return"    { return new Symbol(yyline, yycolumn, LangParserSym.RETURN); }
 
     /* Logical literals */
-    "true"     { return new Token(yyline, yycolumn, TK.BOOL, true); }
-    "false"     { return new Token(yyline, yycolumn, TK.BOOL, false); }
+    "true"     { return new Symbol(yyline, yycolumn, LangParserSym.BOOL, true); }
+    "false"     { return new Symbol(yyline, yycolumn, LangParserSym.BOOL, false); }
 
     
     /* Identifiers and literals */
-    {identifier} { return new Token(yyline, yycolumn, TK.ID, yytext()); }
+    {identifier} { return new Symbol(yyline, yycolumn, LangParserSym.ID, yytext()); }
     {char_normal} { 
-        return new Token(yyline, yycolumn, TK.CHAR_LITERAL, yytext().charAt(1)); 
+        return new Symbol(yyline, yycolumn, LangParserSym.CHAR_LITERAL, yytext().charAt(1)); 
     }
     {char_escape} { 
         String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
         if (val.startsWith("\\")) { // Verifica se é uma sequência de escape.
             switch (val.charAt(1)) {
-                case 'n': return new Token(yyline, yycolumn, TK.NEWLINE);
-                case 't': return new Token(yyline, yycolumn, TK.TAB);
-                case 'b': return new Token(yyline, yycolumn, TK.BACKSPACE);
-                case 'r': return new Token(yyline, yycolumn, TK.CARRIAGERETURN);
-                case '\\': return new Token(yyline, yycolumn, TK.BACKSLASH); // Retorna o caractere de barra invertida.
-                case '\'': return new Token(yyline, yycolumn, TK.SINGLEQUOTE); // Retorna o caractere de aspa simples.
-                case '"': return new Token(yyline, yycolumn, TK.DOUBLEQUOTE); // Retorna o caractere de aspa dupla.
+                case 'n': return new Symbol(yyline, yycolumn, LangParserSym.NEWLINE);
+                case 't': return new Symbol(yyline, yycolumn, LangParserSym.TAB);
+                case 'b': return new Symbol(yyline, yycolumn, LangParserSym.BACKSPACE);
+                case 'r': return new Symbol(yyline, yycolumn, LangParserSym.CARRIAGERETURN);
+                case '\\': return new Symbol(yyline, yycolumn, LangParserSym.BACKSLASH); // Retorna o caractere de barra invertida.
+                case '\'': return new Symbol(yyline, yycolumn, LangParserSym.SINGLEQUOTE); // Retorna o caractere de aspa simples.
+                case '"': return new Symbol(yyline, yycolumn, LangParserSym.DOUBLEQUOTE); // Retorna o caractere de aspa dupla.
                 default:
                     // Verifica se é um código ASCII octal (ex: \065)
                     if (Character.isDigit(val.charAt(1))) {
                         try {
                             String numericValue = val.substring(1); // Pega apenas a parte numérica após a barra invertida
                             int asciiCode = Integer.parseInt(numericValue); // Converte para inteiro sem mudar de base
-                            return new Token(yyline, yycolumn, TK.CHAR_LITERAL, (char) asciiCode);
+                            return new Symbol(yyline, yycolumn, LangParserSym.CHAR_LITERAL, (char) asciiCode);
                         } catch (NumberFormatException e) {
                             System.out.println("Escape numérico inválido: " + val);
                         }
@@ -117,8 +120,8 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
             }
         }
     }
-    {integer}     { return new Token(yyline, yycolumn, TK.INT_LITERAL, "val: " + toInt(yytext())); }
-    {float}      { return new Token(yyline, yycolumn, TK.FLOAT_LITERAL, "val: " + toFloat(yytext())); }
+    {integer}     { return new Symbol(yyline, yycolumn, LangParserSym.INT_LITERAL, "val: " + toInt(yytext())); }
+    {float}      { return new Symbol(yyline, yycolumn, LangParserSym.FLOAT_LITERAL, "val: " + toFloat(yytext())); }
     
     /* Comments (ignored) */
     {comment_block}   { /* Ignorar comentários em bloco*/ }
@@ -126,27 +129,27 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     {white}      { /* Ignorar espaços */ }
 
     /* Operators and punctuation */
-    "+"          { return new Token(yyline, yycolumn, TK.PLUS); }
-    "-"          { return new Token(yyline, yycolumn, TK.MINUS); }
-    "*"          { return new Token(yyline, yycolumn, TK.MULT); }
-    "/"          { return new Token(yyline, yycolumn, TK.DIV); }
-    "%"          { return new Token(yyline, yycolumn, TK.MOD); }
-    "="          { return new Token( yyline, yycolumn, TK.ATBR); }
-    "=="         { return new Token(yyline, yycolumn, TK.EQ); }
-    "!="         { return new Token(yyline, yycolumn, TK.NEQ); }
-    "<"          { return new Token(yyline, yycolumn, TK.LT); }
-    ">"          { return new Token(yyline, yycolumn, TK.GT); }
-    "{"          { return new Token(yyline, yycolumn, TK.LBRACE); }
-    "}"          { return new Token(yyline, yycolumn, TK.RBRACE); }
-    "["          { return new Token(yyline, yycolumn, TK.LBRACKET); }
-    "]"          { return new Token(yyline, yycolumn, TK.RBRACKET); }
-    "("          { return new Token(yyline, yycolumn, TK.LPAREN); }
-    ")"          { return new Token(yyline, yycolumn, TK.RPAREN); }
-    ","          { return new Token(yyline, yycolumn, TK.COMMA); }
-    "."          { return new Token(yyline, yycolumn, TK.DOT); }
-    ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON); }
-    // "::"          { return new Token(yyline, yycolumn, TK.PTR); }
-    ":"          { return new Token(yyline, yycolumn, TK.TYPE); }
+    "+"          { return new Symbol(yyline, yycolumn, LangParserSym.PLUS); }
+    "-"          { return new Symbol(yyline, yycolumn, LangParserSym.MINUS); }
+    "*"          { return new Symbol(yyline, yycolumn, LangParserSym.MULT); }
+    "/"          { return new Symbol(yyline, yycolumn, LangParserSym.DIV); }
+    "%"          { return new Symbol(yyline, yycolumn, LangParserSym.MOD); }
+    "="          { return new Symbol( yyline, yycolumn, LangParserSym.ATBR); }
+    "=="         { return new Symbol(yyline, yycolumn, LangParserSym.EQ); }
+    "!="         { return new Symbol(yyline, yycolumn, LangParserSym.NEQ); }
+    "<"          { return new Symbol(yyline, yycolumn, LangParserSym.LT); }
+    ">"          { return new Symbol(yyline, yycolumn, LangParserSym.GT); }
+    "{"          { return new Symbol(yyline, yycolumn, LangParserSym.LBRACE); }
+    "}"          { return new Symbol(yyline, yycolumn, LangParserSym.RBRACE); }
+    "["          { return new Symbol(yyline, yycolumn, LangParserSym.LBRACKET); }
+    "]"          { return new Symbol(yyline, yycolumn, LangParserSym.RBRACKET); }
+    "("          { return new Symbol(yyline, yycolumn, LangParserSym.LPAREN); }
+    ")"          { return new Symbol(yyline, yycolumn, LangParserSym.RPAREN); }
+    ","          { return new Symbol(yyline, yycolumn, LangParserSym.COMMA); }
+    "."          { return new Symbol(yyline, yycolumn, LangParserSym.DOT); }
+    ";"          { return new Symbol(yyline, yycolumn, LangParserSym.SEMICOLON); }
+    // "::"          { return new Symbol(yyline, yycolumn, LangParserSym.PTR); }
+    ":"          { return new Symbol(yyline, yycolumn, LangParserSym.TYPE); }
     
     /* Error for illegal characters */
     [^]          { throw new Error("Expressao Invalida!!! verifique se existem erros lexicos no arquivo teste"); }
