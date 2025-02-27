@@ -30,22 +30,29 @@ import java.util.ArrayList;
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
-            System.out.println("Erro ao converter " + s + " para inteiro.");
+            System.out.println("Impossible error converting " + s + " to integer");
+            return 0;
+        }
+    }
+
+    private float toFloat(String s) {
+        try {
+            return Float.parseFloat(s);
+        } catch (NumberFormatException e) {
+            System.out.println("Impossible error converting " + s + " to float");
             return 0;
         }
     }
 %}
 
+/* Macro Definitions */
 identifier = [a-z][a-zA-Z0-9_]*
 TYID = [A-Z][a-zA-Z0-9_]*
-number = [0-9]+
+integer = [0-9]+
 float = [0-9]*(\.[0-9]+)
 white = [ \n\t\r]+
-
-// char_normal = "'" [a-zA-Z0-9 ] "'" 
 char_normal = "'" [^'\\] "'" 
-// char_escape = "'" ("\\n" | "\\t" | "\\b" | "\\r" | "\\'" | "\\\"" | "\\\\" [0-7]{1,3}) "'"
-char_escape = "'" "\\" [ntbr\\\'\"] "'" | "'" "\\" [0-7]{1,3} "'"
+char_escape = "'" "\\" [ntbr\\\'\"] "'" | "'" "\\" [0-9]{3} "'"
  
 
 comment_block = "{-" !([^]* "-}" [^]*) ("-}")
@@ -54,6 +61,16 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
 %%
 
 <YYINITIAL>{
+    "--"  !([^]* \R [^]*) \R  {}
+
+    /* Data types */
+    "Int"       { return new Token(yyline, yycolumn, TK.INT); }
+    "Float"     { return new Token(yyline, yycolumn, TK.FLOAT); }
+    "Char"      { return new Token(yyline, yycolumn, TK.CHAR); }
+    "Bool"      { return new Token(yyline, yycolumn, TK.BOOL); }
+    {TYID}       { return new Token(yyline, yycolumn, TK.TYID, yytext()); }
+
+    /* Reserved words */
     "data"      { return new Token(yyline, yycolumn, TK.DATA); }
     "if"        { return new Token(yyline, yycolumn, TK.IF); }
     "else"      { return new Token(yyline, yycolumn, TK.ELSE); }
@@ -61,13 +78,17 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     "read"      { return new Token(yyline, yycolumn, TK.READ); }
     "print"     { return new Token(yyline, yycolumn, TK.PRINT); }
     "null"     { return new Token(yyline, yycolumn, TK.NULL); }
+    "return"    { return new Token(yyline, yycolumn, TK.RETURN); }
+
+    /* Logical literals */
     "true"     { return new Token(yyline, yycolumn, TK.BOOL, true); }
     "false"     { return new Token(yyline, yycolumn, TK.BOOL, false); }
-    "return"    { return new Token(yyline, yycolumn, TK.RETURN); }
+
+    
+    /* Identifiers and literals */
     {identifier} { return new Token(yyline, yycolumn, TK.ID, yytext()); }
-    {TYID}       { return new Token(yyline, yycolumn, TK.TYID, yytext()); }
     {char_normal} { 
-        return new Token(yyline, yycolumn, TK.CHAR, yytext().charAt(1)); 
+        return new Token(yyline, yycolumn, TK.CHAR_LITERAL, yytext().charAt(1)); 
     }
     {char_escape} { 
         String val = yytext().substring(1, yytext().length() - 1); // Remove aspas simples.
@@ -86,7 +107,7 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
                         try {
                             String numericValue = val.substring(1); // Pega apenas a parte numérica após a barra invertida
                             int asciiCode = Integer.parseInt(numericValue); // Converte para inteiro sem mudar de base
-                            return new Token(yyline, yycolumn, TK.CHAR, (char) asciiCode);
+                            return new Token(yyline, yycolumn, TK.CHAR_LITERAL, (char) asciiCode);
                         } catch (NumberFormatException e) {
                             System.out.println("Escape numérico inválido: " + val);
                         }
@@ -96,11 +117,15 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
             }
         }
     }
-    {number}     { return new Token(yyline, yycolumn, TK.INT, "val: " + toInt(yytext())); }
-    {float}      { return new Token(yyline, yycolumn, TK.FLOAT, "val: " + Float.parseFloat(yytext())); }
+    {integer}     { return new Token(yyline, yycolumn, TK.INT_LITERAL, "val: " + toInt(yytext())); }
+    {float}      { return new Token(yyline, yycolumn, TK.FLOAT_LITERAL, "val: " + toFloat(yytext())); }
+    
+    /* Comments (ignored) */
     {comment_block}   { /* Ignorar comentários em bloco*/ }
     {comment_line}    { /* Ignorar comentários em linha*/ }
     {white}      { /* Ignorar espaços */ }
+
+    /* Operators and punctuation */
     "+"          { return new Token(yyline, yycolumn, TK.PLUS); }
     "-"          { return new Token(yyline, yycolumn, TK.MINUS); }
     "*"          { return new Token(yyline, yycolumn, TK.MULT); }
@@ -120,7 +145,9 @@ comment_line = "--" !([^]* "\n" [^]*) ("\n")
     ","          { return new Token(yyline, yycolumn, TK.COMMA); }
     "."          { return new Token(yyline, yycolumn, TK.DOT); }
     ";"          { return new Token(yyline, yycolumn, TK.SEMICOLON); }
-    "::"          { return new Token(yyline, yycolumn, TK.PTR); }
+    // "::"          { return new Token(yyline, yycolumn, TK.PTR); }
     ":"          { return new Token(yyline, yycolumn, TK.TYPE); }
+    
+    /* Error for illegal characters */
     [^]          { throw new Error("Expressao Invalida!!! verifique se existem erros lexicos no arquivo teste"); }
 }

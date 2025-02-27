@@ -17,14 +17,17 @@ public enum TK {
    // Identificadores e tipos
    ID,
    TYID,
-   PTR,
    TYPE,
-
-   // Literais
    INT,
    FLOAT,
    CHAR,
    BOOL,
+
+   // Literais
+   INT_LITERAL,
+   FLOAT_LITERAL,
+   CHAR_LITERAL,
+   BOOL_LITERAL,
    NULL,
 
    // Operadores
@@ -58,7 +61,6 @@ public enum TK {
    BACKSLASH,
    SINGLEQUOTE,
    DOUBLEQUOTE,
-   ASC,
 
    // Fim do arquivo
    EOF
