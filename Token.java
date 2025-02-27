@@ -18,12 +18,14 @@ public class Token {
    }
 
    public Token(int line, int column, TK t, Object v){
-       this(line,column,t);
-       value = v;
+        this.line = line;
+        this.column = column;
+        tk = t;
+        value = v;
    }
 
    public String toString(){
-       return "(" + line + "," + column+ ") TK: " + tk +  (value == null ? "" : " - (" + value.toString() + ")");
+       return "(" + line + "," + column+ ") TK: " + tk +  (value == null ? "" : " - val [" + value.toString() + "] ");
    }
 
 }
