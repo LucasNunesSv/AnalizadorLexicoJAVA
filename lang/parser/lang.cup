@@ -1,0 +1,58 @@
+/* Simple +/-/* expression language; parser evaluates constant expressions on the fly*/
+
+package lang.parser;
+
+import java_cup.runtime.*;
+import lang.ast.*;
+import lang.ast.command.*;
+import lang.ast.expr.*;
+import lang.ast.types.*;
+import java.util.ArrayList;
+
+class LangParser;
+parser code {:
+    // Connect this parser to a scanner!
+    LangLexer s;
+    public LangParser(LangLexer s){ this.s=s; }
+    // Get the line
+:}
+
+init with {:               :};
+scan with {: return s.nextToken(); :};
+
+/* define how to connect to the scanner! */
+
+/*
+   Terminais
+*/
+terminal PLUS, TIMES, LP, RP;
+terminal Integer NUMBER;        // our scanner provides numbers as integers
+terminal Boolean TRUE,FALSE;
+terminal String ID;
+
+/* Non terminals */
+non terminal Exp expr;
+non terminal Exp prog;
+
+/*
+  Precencia e associatividade dos operadores.
+  Lista em ordem dos de menor prioridade para os de maior
+  prioridade.
+*/
+
+precedence left TIMES;
+precedence left PLUS;
+
+/* The grammar rules */
+
+prog ::= expr:e {: RESULT = e; :}
+       ;
+
+expr  ::= expr:e1 PLUS:p expr:e2 {: RESULT = new Plus(pleft,pright,e1,e2); :}
+       |  expr:e1 TIMES:s expr:e2 {: RESULT = new Times(sleft,sright,e1,e2); :}
+       |  LP expr:e RP {: RESULT = e; :}
+       |  NUMBER:n {: RESULT = new IntLit(nleft,nright,n); :}
+       |  TRUE:t {: RESULT = new BoolLit(tleft,tright,true); :}
+       |  FALSE:f {: RESULT = new BoolLit(fleft,fright,false); :}
+       |  ID:i {: RESULT = new Var(ileft,iright,i); :}
+       ;
